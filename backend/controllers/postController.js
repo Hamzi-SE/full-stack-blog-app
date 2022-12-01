@@ -1,8 +1,9 @@
 const Post = require("../models/Post");
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
-const cloudinary = require('../utils/cloudinary');
+const { cloudinary } = require('../utils/cloudinary');
 const ErrorHandler = require("../utils/errorHandler");
 const FeaturedPost = require("../models/FeaturedPost");
+const uploadImagetoCloudinary = require("../utils/uploadImageToCloudinary");
 
 
 const FEATURED_POSTS_LIMIT = 4;
@@ -43,11 +44,8 @@ exports.createPost = catchAsyncErrors(async (req, res, next) => {
     const post = await Post.create({ title, meta, content, slug, author, tags });
 
     if (file) {
-        const result = await cloudinary.uploader.upload(file.path, {
-            folder: "blog",
-            use_filename: true,
-            unique_filename: true,
-        });
+        // Upload image to cloudinary
+        const result = await uploadImagetoCloudinary(file.path);
 
         post.thumbnail = {
             public_id: result.public_id,
@@ -101,11 +99,7 @@ exports.updatePost = catchAsyncErrors(async (req, res, next) => {
         await cloudinary.uploader.destroy(post.thumbnail.public_id);
 
         // Upload image to cloudinary
-        const result = await cloudinary.uploader.upload(file.path, {
-            folder: "blog",
-            use_filename: true,
-            unique_filename: true,
-        });
+        const result = await uploadImagetoCloudinary(file.path);
 
         post.thumbnail = {
             public_id: result.public_id,
@@ -115,11 +109,7 @@ exports.updatePost = catchAsyncErrors(async (req, res, next) => {
         await post.save();
 
     } else if (file) {
-        const result = await cloudinary.uploader.upload(file.path, {
-            folder: "blog",
-            use_filename: true,
-            unique_filename: true,
-        });
+        const result = await uploadImagetoCloudinary(file.path);
 
         post.thumbnail = {
             public_id: result.public_id,
@@ -197,7 +187,9 @@ exports.getPosts = catchAsyncErrors(async (req, res, next) => {
         .skip((page - 1) * limitPerPage)
         .limit(limitPerPage);
 
-    res.status(200).json({ success: true, posts });
+    const postsCount = await Post.countDocuments();
+
+    res.status(200).json({ success: true, postsCount, posts });
 });
 
 
@@ -240,11 +232,7 @@ exports.uploadImage = catchAsyncErrors(async (req, res, next) => {
 
     if (!file) return next(new ErrorHandler("Please upload an image", 400));
 
-    const result = await cloudinary.uploader.upload(file.path, {
-        folder: "blog",
-        use_filename: true,
-        unique_filename: true,
-    });
+    const result = await uploadImagetoCloudinary(file.path);
 
     res.status(200).json({ image: result.secure_url });
 });
