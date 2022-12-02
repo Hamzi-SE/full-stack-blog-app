@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { getPosts } from '../api/post'
+import { getPosts, deletePost } from '../api/post'
 import PostCard from './PostCard';
 
 let pageNo = 1;
@@ -26,6 +26,17 @@ const Home = () => {
         else return console.log(message);
     }
 
+    const handlePostDelete = async ({ _id }) => {
+        const { success, message } = await deletePost(_id);
+        if (success) {
+            alert(message)
+            fetchPosts();
+        }
+        else return console.log(message);
+    }
+
+
+
 
     useEffect(() => {
 
@@ -34,10 +45,10 @@ const Home = () => {
 
     return (
         <div>
-            <div className="posts grid grid-cols-3 gap-3">
+            <div className="posts grid grid-cols-3 gap-3 pb-5">
                 {posts.map((post) => (
                     <div className="post" key={post._id}>
-                        <PostCard post={post} />
+                        <PostCard post={post} onDeleteClick={() => handlePostDelete(post)} />
                     </div>
                 ))}
             </div>
