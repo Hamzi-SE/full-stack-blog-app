@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import { getPosts, deletePost } from '../api/post'
+import { getPosts, deletePost, getPaginationCount } from '../api/post'
+import { useSearch } from '../context/SearchProvider.jsx';
 import PostCard from './PostCard';
 
 let pageNo = 1;
-const POST_LIMIT = 2;
-
-const getPaginationCount = (totalPostCount) => {
-    return Math.ceil(totalPostCount / POST_LIMIT);
-}
+const POST_LIMIT = 3;
 
 const Home = () => {
     const [posts, setPosts] = useState([]);
-    const [totalPostCount, setTotalPostCount] = useState(0)
+    const [totalPostCount, setTotalPostCount] = useState(0);
+    const { searchResult } = useSearch();
 
-    const paginationCount = getPaginationCount(totalPostCount);
+    const paginationCount = getPaginationCount(totalPostCount, POST_LIMIT);
     const paginationArray = new Array(paginationCount).fill(' ');
 
     const fetchPosts = async () => {
@@ -36,8 +34,6 @@ const Home = () => {
     }
 
 
-
-
     useEffect(() => {
 
         fetchPosts();
@@ -46,13 +42,16 @@ const Home = () => {
     return (
         <div>
             <div className="posts grid grid-cols-3 gap-3 pb-5">
-                {posts.map((post) => (
-                    <div className="post" key={post._id}>
-                        <PostCard post={post} onDeleteClick={() => handlePostDelete(post)} />
-                    </div>
-                ))}
+                {searchResult?.length > 0 ?
+                    searchResult.map((post) => (
+                        <PostCard key={post._id} post={post} onDeleteClick={() => handlePostDelete(post)} />))
+                    : posts.map((post) => (
+                        <div className="post" key={post._id}>
+                            <PostCard post={post} onDeleteClick={() => handlePostDelete(post)} />
+                        </div>
+                    ))}
             </div>
-            <div className="pagination flex justify-center items-center py-5 space-x-3">
+            {paginationArray.length > 1 && !searchResult.length && <div className="pagination flex justify-center items-center py-5 space-x-3">
                 {paginationArray.map((_, index) => (
                     <button
                         className={index + 1 === pageNo ? 'px-3 py-1 bg-gray-200 text-blue-500 border-b-2 border-b-blue-500' : 'px-3 py-1 text-gray-500'}
@@ -65,7 +64,7 @@ const Home = () => {
                         {index + 1}
                     </button>
                 ))}
-            </div>
+            </div>}
         </div>
     )
 }

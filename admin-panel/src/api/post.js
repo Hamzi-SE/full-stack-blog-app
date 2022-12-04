@@ -26,3 +26,19 @@ export const deletePost = async (postId) => {
         return { success: false, message: error.message || error };
     }
 }
+
+export const getPaginationCount = (totalPostCount, POST_LIMIT) => {
+    return Math.ceil(totalPostCount / POST_LIMIT);
+}
+
+export const searchPost = async (query) => {
+    try {
+        const { data } = await client.get(`/post/search?query=${query}`);
+        return data;
+    } catch (error) {
+        if (error?.response) {
+            return error.response.data;
+        }
+        return { success: false, message: error.message || error };
+    }
+}
