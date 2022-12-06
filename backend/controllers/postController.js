@@ -234,5 +234,5 @@ exports.uploadImage = catchAsyncErrors(async (req, res, next) => {
 
     const result = await uploadImagetoCloudinary(file.path);
 
-    res.status(200).json({ image: result.secure_url });
+    res.status(200).json({ success: true, image: result.secure_url });
 });
