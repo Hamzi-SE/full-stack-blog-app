@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { getPosts, deletePost, getPaginationCount } from '../api/post'
+import { useNotification } from '../context/NotificationProvider';
 import { useSearch } from '../context/SearchProvider.jsx';
 import PostCard from './PostCard';
 
@@ -11,6 +12,8 @@ const Home = () => {
     const [totalPostCount, setTotalPostCount] = useState(0);
     const { searchResult } = useSearch();
 
+    const { updateNotification } = useNotification();
+
     const paginationCount = getPaginationCount(totalPostCount, POST_LIMIT);
     const paginationArray = new Array(paginationCount).fill(' ');
 
@@ -21,22 +24,22 @@ const Home = () => {
             setPosts(posts);
             setTotalPostCount(postsCount);
         }
-        else return console.log(message);
+        else return updateNotification("error", message);
     }
 
     const handlePostDelete = async ({ _id }) => {
         const { success, message } = await deletePost(_id);
         if (success) {
-            alert(message)
+            updateNotification("success", message);
             fetchPosts();
         }
-        else return console.log(message);
+        else return updateNotification("error", message);
     }
 
 
     useEffect(() => {
-
         fetchPosts();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return (

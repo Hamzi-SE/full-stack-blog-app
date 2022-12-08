@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { ImSpinner11, ImEye, ImFilePicture, ImFilesEmpty, ImSpinner3 } from 'react-icons/im'
 import { uploadImage } from '../api/post';
+import { useNotification } from '../context/NotificationProvider.jsx';
 
 const mdRules = [
     { title: "From h1 to h6", rule: "# Heading -> ###### Heading", key: "mdRule1" },
@@ -19,13 +20,15 @@ const CreatePost = () => {
     const [imageUrlToCopy, setImageUrlToCopy] = useState('');
     const [imageUploading, setImageUploading] = useState(false);
 
+    const { updateNotification } = useNotification();
+
     const handleChange = (e) => {
         const { name, value } = e.target;
 
         if (name === "thumbnail") {
             const file = e.target.files[0];
             if (!file.type?.includes("image")) {
-                alert("Please select an image file");
+                updateNotification("error", "Please select an image file");
                 return;
             }
             setPost({ ...post, thumbnail: file });
@@ -39,7 +42,7 @@ const CreatePost = () => {
         if (name === "tags") {
             const tags = value.split(",");
             if (tags.length > 4) {
-                console.log("Only first 4 tags will be saved");
+                updateNotification("warning", "Only first 4 tags will be saved");
                 return setPost({ ...post, tags: tags.slice(0, 4) });
             }
             return setPost({ ...post, tags });
@@ -57,14 +60,14 @@ const CreatePost = () => {
         setImageUrlToCopy('');
         const file = e.target.files[0];
         if (!file.type?.includes("image")) {
-            alert("Please select an image file");
+            updateNotification("error", "Please select an image file");
             return;
         }
         setImageUploading(true);
         const formData = new FormData();
         formData.append("image", file); // image is the key in the backend api route
         const { success, message, image } = await uploadImage(formData);
-        if (!success) return alert(message);
+        if (!success) return updateNotification("error", message);
         setImageUploading(false);
         setImageUrlToCopy(image);
     }
