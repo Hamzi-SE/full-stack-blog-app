@@ -1,8 +1,9 @@
 import React from 'react'
+import PostForm from './PostForm'
 
 const UpdatePost = () => {
     return (
-        <div>UpdatePost</div>
+        <PostForm />
     )
 }
 

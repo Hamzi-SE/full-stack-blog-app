@@ -12,7 +12,7 @@ exports.postValidator = [
         .not()
         .isEmpty() // make sure it's not empty
         .withMessage('Content is required') // return this message if it is empty
-        .isLength({ min: 100 }) // make sure it's at least 100 characters long
+        .isLength({ min: 10 }) // make sure it's at least 10 characters long
         .withMessage('Content is too short'),
 
     check('meta') // check the meta field
