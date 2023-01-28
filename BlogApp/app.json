@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "BlogApp",
-    "slug": "BlogApp",
+    "name": "Musings",
+    "slug": "Musings",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/appIcon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
+      "image": "./assets/splashScreen.png",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
     "updates": {
@@ -22,12 +22,18 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/adaptiveIcon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.hamzii.se.Musings"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favIcon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "3ad30be3-1958-4bf9-aa89-da8def34cd22"
+      }
     }
   }
 }
